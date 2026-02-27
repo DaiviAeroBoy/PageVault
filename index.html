@@ -1,0 +1,2034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PageVault — Free open community library. Read, download and share books. No registration. No sign up. No sign in. Ever.">
+  <title>PageVault — Free Open Library · No Registration Required</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Inconsolata:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       DESIGN SYSTEM
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --void:         #090806;
+      --abyss:        #111009;
+      --deep:         #18150f;
+      --bark:         #231d14;
+      --warm:         #312719;
+      --parchment:    #f0e6cf;
+      --parchment2:   #e4d8be;
+      --parchment3:   #ccc0a4;
+      --gold:         #c8901e;
+      --gold-bright:  #e5aa3a;
+      --gold-pale:    #f0c870;
+      --ember:        #b8432a;
+      --forest:       #3a6148;
+      --slate:        #324558;
+      --cream:        #f8f2e4;
+      --shadow:       rgba(9,8,6,0.55);
+      --glow-gold:    rgba(200,144,30,0.18);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--void);
+      color: var(--parchment);
+      font-family: 'Inconsolata', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Grain texture */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23g)' opacity='0.028'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9998;
+      mix-blend-mode: overlay;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--abyss); }
+    ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+    /* ── Utilities ── */
+    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+    /* ============================================================
+       MARQUEE BANNER
+    ============================================================ */
+    .top-banner {
+      background: var(--gold);
+      overflow: hidden;
+      height: 36px;
+      display: flex;
+      align-items: center;
+    }
+
+    .marquee-track {
+      display: flex;
+      animation: marquee 28s linear infinite;
+      white-space: nowrap;
+      gap: 0;
+    }
+
+    .marquee-track span {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--void);
+      padding: 0 36px;
+    }
+
+    .marquee-track span.dot {
+      padding: 0;
+      opacity: 0.4;
+      font-size: 0.5rem;
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ============================================================
+       HEADER
+    ============================================================ */
+    header {
+      background: var(--abyss);
+      border-bottom: 1px solid rgba(200,144,30,0.2);
+      height: 76px;
+      padding: 0 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 600;
+    }
+
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-decoration: none;
+    }
+
+    .logo-emblem {
+      width: 46px;
+      height: 46px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      box-shadow: 0 4px 16px rgba(200,144,30,0.35);
+    }
+
+    .logo-text { line-height: 1; }
+
+    .logo-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--parchment);
+      letter-spacing: -0.02em;
+    }
+    .logo-name em { color: var(--gold-bright); font-style: italic; }
+
+    .logo-sub {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-top: 2px;
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-badge {
+      background: rgba(200,144,30,0.1);
+      border: 1px solid rgba(200,144,30,0.3);
+      color: var(--gold-pale);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 7px 16px;
+      border-radius: 2px;
+    }
+
+    .btn {
+      font-family: 'Inconsolata', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 10px 22px;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.18s ease;
+      white-space: nowrap;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--parchment2);
+      border: 1px solid rgba(240,230,207,0.18);
+    }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold-bright); }
+
+    .btn-gold {
+      background: var(--gold);
+      color: var(--void);
+      font-weight: 700;
+    }
+    .btn-gold:hover {
+      background: var(--gold-bright);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(200,144,30,0.45);
+    }
+
+    .btn-forest {
+      background: var(--forest);
+      color: #c8e8d4;
+    }
+    .btn-forest:hover { background: #4a7a5a; transform: translateY(-1px); }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    .hero {
+      position: relative;
+      background: var(--deep);
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 55% 100% at 80% 50%, rgba(200,144,30,0.07) 0%, transparent 65%),
+        radial-gradient(ellipse 35% 70% at 5% 100%, rgba(184,67,42,0.05) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 60% at 50% -10%, rgba(200,144,30,0.04) 0%, transparent 55%);
+      pointer-events: none;
+    }
+
+    /* Decorative vertical lines */
+    .hero-lines {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 420px;
+      display: flex;
+      align-items: stretch;
+      gap: 40px;
+      opacity: 0.06;
+      pointer-events: none;
+    }
+    .hero-lines span {
+      flex: 1;
+      background: var(--gold);
+    }
+
+    .hero-inner {
+      position: relative;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 96px 52px 88px;
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    /* Left column */
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(200,144,30,0.1);
+      border: 1px solid rgba(200,144,30,0.25);
+      color: var(--gold-bright);
+      font-size: 0.64rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 7px 16px;
+      border-radius: 2px;
+      margin-bottom: 28px;
+    }
+    .eyebrow-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: breathe 2.5s ease-in-out infinite;
+    }
+    @keyframes breathe { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+
+    .hero-h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.2rem, 5.5vw, 5.6rem);
+      font-weight: 700;
+      line-height: 0.98;
+      letter-spacing: -0.03em;
+      margin-bottom: 30px;
+    }
+    .hero-h1 .line-italic {
+      font-style: italic;
+      color: var(--gold-bright);
+      display: block;
+    }
+    .hero-h1 .line-normal { display: block; }
+
+    .hero-p {
+      font-size: 0.9rem;
+      line-height: 1.9;
+      color: rgba(240,230,207,0.55);
+      max-width: 480px;
+      margin-bottom: 36px;
+    }
+
+    /* NO REGISTRATION BLOCK */
+    .freedom-block {
+      background: var(--bark);
+      border: 1px solid rgba(200,144,30,0.22);
+      border-left: 4px solid var(--gold);
+      border-radius: 2px;
+      padding: 22px 26px;
+      margin-bottom: 38px;
+    }
+
+    .freedom-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(240,230,207,0.35);
+      margin-bottom: 14px;
+    }
+
+    .freedom-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .freedom-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(200,144,30,0.08);
+      border: 1px solid rgba(200,144,30,0.2);
+      color: var(--gold-pale);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 9px 16px;
+      border-radius: 2px;
+    }
+
+    .pill-x {
+      color: var(--ember);
+      font-size: 0.9rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    /* Right column — stats card */
+    .stats-card {
+      background: var(--bark);
+      border: 1px solid rgba(200,144,30,0.2);
+      border-radius: 3px;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(9,8,6,0.5);
+    }
+
+    .stats-card-head {
+      background: linear-gradient(90deg, var(--gold) 0%, var(--gold-bright) 100%);
+      padding: 18px 28px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--void);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stats-live-dot {
+      width: 8px; height: 8px;
+      background: rgba(9,8,6,0.5);
+      border-radius: 50%;
+      animation: breathe 2s ease-in-out infinite;
+    }
+
+    .stats-rows { padding: 6px 0; }
+
+    .stats-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 28px;
+      border-bottom: 1px solid rgba(200,144,30,0.08);
+      transition: background 0.15s;
+    }
+    .stats-row:last-child { border-bottom: none; }
+    .stats-row:hover { background: rgba(200,144,30,0.04); }
+
+    .stats-row-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(240,230,207,0.4);
+    }
+
+    .stats-row-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--gold-bright);
+      line-height: 1;
+    }
+
+    .stats-row-value sup {
+      font-family: 'Inconsolata', monospace;
+      font-size: 0.6rem;
+      font-weight: 400;
+      color: rgba(240,230,207,0.35);
+      vertical-align: middle;
+      margin-left: 5px;
+    }
+
+    .stats-free-row {
+      padding: 18px 28px;
+      background: rgba(58,97,72,0.2);
+      border-top: 1px solid rgba(58,97,72,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .free-label {
+      font-size: 0.64rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #7bc49a;
+    }
+
+    .free-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #8ed4aa;
+    }
+
+    .stats-card-foot {
+      background: rgba(200,144,30,0.06);
+      border-top: 1px solid rgba(200,144,30,0.1);
+      padding: 14px 28px;
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-align: center;
+    }
+
+    /* ============================================================
+       SEARCH + FILTER BAR
+    ============================================================ */
+    .controls-strip {
+      background: var(--abyss);
+      border-top: 1px solid rgba(200,144,30,0.12);
+      border-bottom: 1px solid rgba(200,144,30,0.12);
+      position: sticky;
+      top: 76px;
+      z-index: 500;
+    }
+
+    .controls-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 18px 52px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-field {
+      flex: 1;
+      min-width: 280px;
+      position: relative;
+    }
+
+    .search-field svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gold);
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    #searchInput {
+      width: 100%;
+      background: var(--bark);
+      border: 1px solid rgba(200,144,30,0.2);
+      color: var(--parchment);
+      font-family: 'Inconsolata', monospace;
+      font-size: 0.84rem;
+      padding: 13px 16px 13px 44px;
+      border-radius: 2px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    #searchInput::placeholder { color: rgba(240,230,207,0.22); }
+    #searchInput:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(200,144,30,0.12);
+    }
+
+    .sep { width: 1px; height: 32px; background: rgba(200,144,30,0.15); flex-shrink: 0; }
+
+    .filters { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    .f-btn {
+      font-family: 'Inconsolata', monospace;
+      font-size: 0.67rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      background: transparent;
+      border: 1px solid rgba(240,230,207,0.1);
+      color: rgba(240,230,207,0.38);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.14s;
+    }
+    .f-btn:hover { border-color: rgba(200,144,30,0.5); color: var(--gold-bright); }
+    .f-btn.active { background: var(--gold); border-color: var(--gold); color: var(--void); }
+
+    .sort-wrap { display: flex; align-items: center; gap: 8px; }
+    .sort-lbl { font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(240,230,207,0.28); }
+
+    #sortSelect {
+      font-family: 'Inconsolata', monospace;
+      font-size: 0.74rem;
+      padding: 9px 32px 9px 13px;
+      background: var(--bark);
+      border: 1px solid rgba(200,144,30,0.2);
+      color: var(--parchment2);
+      border-radius: 2px;
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23c8901e' stroke-width='1.5' stroke-linecap='round' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+    }
+    #sortSelect:focus { border-color: var(--gold); }
+
+    .result-count {
+      margin-left: auto;
+      font-size: 0.67rem;
+      letter-spacing: 0.08em;
+      color: rgba(240,230,207,0.28);
+    }
+    .result-count strong { color: var(--gold-bright); }
+
+    /* ============================================================
+       MAIN CONTENT
+    ============================================================ */
+    .main-content {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 52px 52px 90px;
+    }
+
+    .sec-heading {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .sec-title {
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      white-space: nowrap;
+    }
+
+    .sec-rule {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(200,144,30,0.35) 0%, transparent 100%);
+    }
+
+    /* ============================================================
+       BOOK GRID
+    ============================================================ */
+    #bookGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      gap: 2px;
+      background: rgba(200,144,30,0.06);
+      border: 1px solid rgba(200,144,30,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 72px;
+    }
+
+    .book-card {
+      background: var(--deep);
+      transition: background 0.2s;
+      animation: slideUp 0.35s ease both;
+      display: flex;
+      flex-direction: column;
+    }
+    .book-card:hover { background: var(--bark); }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-accent { height: 3px; width: 100%; flex-shrink: 0; }
+
+    .card-body {
+      padding: 24px 26px 22px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 13px;
+    }
+
+    .genre-chip {
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 2px;
+      background: rgba(200,144,30,0.1);
+      border: 1px solid rgba(200,144,30,0.2);
+      color: var(--gold);
+    }
+
+    .format-chip {
+      font-size: 0.56rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(240,230,207,0.28);
+      border: 1px solid rgba(240,230,207,0.1);
+      padding: 3px 8px;
+      border-radius: 2px;
+    }
+
+    .card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--parchment);
+      margin-bottom: 5px;
+      letter-spacing: -0.01em;
+    }
+
+    .card-author {
+      font-size: 0.73rem;
+      color: rgba(200,144,30,0.8);
+      margin-bottom: 14px;
+    }
+    .card-author::before { content: '— '; opacity: 0.5; }
+
+    .card-desc {
+      font-size: 0.76rem;
+      line-height: 1.75;
+      color: rgba(240,230,207,0.4);
+      flex: 1;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      margin-bottom: 18px;
+    }
+
+    .card-meta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding-top: 14px;
+      border-top: 1px solid rgba(200,144,30,0.08);
+      margin-bottom: 18px;
+    }
+
+    .meta-pair { display: flex; flex-direction: column; gap: 2px; }
+    .meta-k { font-size: 0.53rem; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(240,230,207,0.22); }
+    .meta-v { font-size: 0.7rem; color: rgba(240,230,207,0.55); }
+
+    .card-actions { display: flex; gap: 8px; }
+
+    .card-btn {
+      flex: 1;
+      font-family: 'Inconsolata', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 11px 8px;
+      border-radius: 2px;
+      border: 1px solid;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .btn-dl {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--void);
+    }
+    .btn-dl:hover {
+      background: var(--gold-bright);
+      border-color: var(--gold-bright);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(200,144,30,0.4);
+    }
+
+    .btn-rd {
+      background: transparent;
+      border-color: rgba(240,230,207,0.14);
+      color: rgba(240,230,207,0.48);
+    }
+    .btn-rd:hover {
+      border-color: rgba(240,230,207,0.38);
+      color: var(--parchment);
+    }
+
+    /* Empty & loading states */
+    .state-box {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 90px 40px;
+      background: var(--deep);
+    }
+    .state-icon { font-size: 3rem; margin-bottom: 14px; opacity: 0.4; }
+    .state-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      color: var(--parchment2);
+      margin-bottom: 8px;
+    }
+    .state-sub { font-size: 0.78rem; color: rgba(240,230,207,0.3); }
+    .state-sub a { color: var(--gold-bright); text-decoration: none; cursor: pointer; }
+
+    .spinner {
+      display: inline-flex;
+      gap: 7px;
+      margin-bottom: 16px;
+    }
+    .spinner i {
+      width: 9px; height: 9px;
+      background: var(--gold);
+      border-radius: 50%;
+      display: block;
+      animation: bounce 1.1s ease infinite;
+    }
+    .spinner i:nth-child(2) { animation-delay: 0.18s; }
+    .spinner i:nth-child(3) { animation-delay: 0.36s; }
+    @keyframes bounce { 0%,80%,100%{transform:scale(0.55);opacity:0.3} 40%{transform:scale(1);opacity:1} }
+
+    /* ============================================================
+       UPLOAD SECTION (key feature)
+    ============================================================ */
+    .upload-section {
+      background: var(--bark);
+      border: 1px solid rgba(200,144,30,0.18);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 72px;
+    }
+
+    .upload-hero {
+      background: linear-gradient(110deg, var(--void) 0%, var(--warm) 60%, rgba(200,144,30,0.12) 100%);
+      padding: 56px 60px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 60px;
+      align-items: center;
+      border-bottom: 1px solid rgba(200,144,30,0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-hero::before {
+      content: '📚';
+      position: absolute;
+      right: 320px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 8rem;
+      opacity: 0.04;
+      pointer-events: none;
+    }
+
+    .upload-hero h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 2.8vw, 2.6rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+    .upload-hero h2 em { color: var(--gold-bright); font-style: italic; }
+
+    .upload-hero p {
+      font-size: 0.82rem;
+      line-height: 1.85;
+      color: rgba(240,230,207,0.45);
+      max-width: 540px;
+    }
+
+    .upload-cta-group { display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
+
+    /* Upload form panel */
+    .upload-form-wrap {
+      padding: 44px 60px;
+    }
+
+    .upload-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .uf-group { display: flex; flex-direction: column; gap: 8px; }
+    .uf-group.span2 { grid-column: 1 / -1; }
+
+    .uf-label {
+      font-size: 0.63rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .uf-input, .uf-select, .uf-textarea {
+      background: var(--deep);
+      border: 1px solid rgba(200,144,30,0.18);
+      color: var(--parchment);
+      font-family: 'Inconsolata', monospace;
+      font-size: 0.84rem;
+      padding: 12px 15px;
+      border-radius: 2px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
+    }
+    .uf-input:focus, .uf-select:focus, .uf-textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(200,144,30,0.1);
+    }
+    .uf-input::placeholder { color: rgba(240,230,207,0.18); }
+    .uf-select { appearance: none; cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23c8901e' stroke-width='1.5' stroke-linecap='round' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px;
+    }
+    .uf-textarea { resize: vertical; min-height: 88px; line-height: 1.65; }
+
+    /* Drop Zone */
+    .drop-zone {
+      border: 2px dashed rgba(200,144,30,0.28);
+      border-radius: 3px;
+      padding: 40px 24px;
+      text-align: center;
+      cursor: pointer;
+      background: var(--deep);
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .drop-zone:hover, .drop-zone.active {
+      border-color: var(--gold);
+      background: rgba(200,144,30,0.05);
+    }
+
+    .drop-zone.has-file {
+      border-color: var(--forest);
+      background: rgba(58,97,72,0.08);
+    }
+
+    .drop-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .drop-icon { font-size: 2.4rem; margin-bottom: 10px; }
+
+    .drop-main {
+      font-size: 0.82rem;
+      color: rgba(240,230,207,0.5);
+      line-height: 1.7;
+    }
+    .drop-main strong { color: var(--gold-bright); }
+
+    .drop-sub {
+      font-size: 0.66rem;
+      letter-spacing: 0.08em;
+      color: rgba(240,230,207,0.25);
+      margin-top: 8px;
+    }
+
+    .drop-file-name {
+      margin-top: 12px;
+      font-size: 0.78rem;
+      color: #7bc49a;
+      font-weight: 600;
+    }
+
+    /* Progress bar */
+    .upload-progress {
+      margin-top: 16px;
+      display: none;
+    }
+    .upload-progress.show { display: block; }
+
+    .progress-bar-track {
+      background: var(--deep);
+      border-radius: 2px;
+      height: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(200,144,30,0.1);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold) 0%, var(--gold-bright) 100%);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-label {
+      font-size: 0.68rem;
+      color: rgba(240,230,207,0.4);
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    .upload-submit-row {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(200,144,30,0.1);
+    }
+
+    .upload-submit-row .btn { font-size: 0.82rem; padding: 14px 32px; }
+    .upload-submit-row .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+    .upload-disclaimer {
+      font-size: 0.68rem;
+      line-height: 1.75;
+      color: rgba(240,230,207,0.28);
+      flex: 1;
+    }
+    .upload-disclaimer strong { color: rgba(240,230,207,0.5); }
+
+    /* ============================================================
+       HOW IT WORKS
+    ============================================================ */
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: rgba(200,144,30,0.06);
+      border: 1px solid rgba(200,144,30,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 72px;
+    }
+
+    .how-card {
+      background: var(--deep);
+      padding: 36px 32px 32px;
+      transition: background 0.2s;
+    }
+    .how-card:hover { background: var(--bark); }
+
+    .how-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 4rem;
+      font-weight: 700;
+      color: rgba(200,144,30,0.15);
+      line-height: 1;
+      margin-bottom: 14px;
+    }
+
+    .how-icon { font-size: 1.8rem; margin-bottom: 14px; }
+
+    .how-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--parchment);
+      margin-bottom: 10px;
+    }
+
+    .how-text {
+      font-size: 0.76rem;
+      line-height: 1.85;
+      color: rgba(240,230,207,0.38);
+    }
+
+    /* ============================================================
+       LEGAL
+    ============================================================ */
+    .legal-bar {
+      background: rgba(184,67,42,0.07);
+      border: 1px solid rgba(184,67,42,0.18);
+      border-radius: 3px;
+      padding: 22px 28px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 72px;
+    }
+    .legal-icon { font-size: 1.3rem; flex-shrink: 0; }
+    .legal-body h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      color: var(--parchment);
+      margin-bottom: 6px;
+    }
+    .legal-body p { font-size: 0.74rem; line-height: 1.8; color: rgba(240,230,207,0.42); }
+    .legal-body a { color: var(--gold-bright); text-decoration: none; }
+    .legal-body a:hover { text-decoration: underline; }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: var(--abyss);
+      border-top: 1px solid rgba(200,144,30,0.12);
+    }
+
+    .footer-grid {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 60px 52px 44px;
+      display: grid;
+      grid-template-columns: 1.6fr 1fr 1fr 1fr;
+      gap: 56px;
+    }
+
+    .ft-logo-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--parchment);
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .ft-logo-name em { color: var(--gold-bright); font-style: italic; }
+
+    .ft-brand-text {
+      font-size: 0.74rem;
+      line-height: 1.85;
+      color: rgba(240,230,207,0.3);
+      margin-bottom: 20px;
+    }
+
+    .ft-pills { display: flex; flex-direction: column; gap: 7px; }
+    .ft-pill {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.65rem; font-weight: 700;
+      color: rgba(200,144,30,0.8);
+      background: rgba(200,144,30,0.06);
+      border: 1px solid rgba(200,144,30,0.12);
+      padding: 7px 13px; border-radius: 2px; width: fit-content;
+    }
+    .ft-pill .x { color: var(--ember); font-weight: 900; }
+
+    .ft-col h5 {
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 18px;
+    }
+
+    .ft-col ul { list-style: none; }
+    .ft-col li { margin-bottom: 10px; }
+    .ft-col a {
+      font-size: 0.74rem;
+      color: rgba(240,230,207,0.36);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .ft-col a:hover { color: var(--gold-bright); }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(200,144,30,0.08);
+      padding: 20px 52px;
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .ft-copy { font-size: 0.66rem; color: rgba(240,230,207,0.22); }
+
+    .ft-links { display: flex; gap: 22px; }
+    .ft-links a { font-size: 0.66rem; color: rgba(240,230,207,0.28); text-decoration: none; }
+    .ft-links a:hover { color: var(--gold-bright); }
+
+    /* ============================================================
+       TOAST NOTIFICATION
+    ============================================================ */
+    .toast-container {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 9000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .toast {
+      background: var(--bark);
+      border: 1px solid rgba(200,144,30,0.28);
+      border-left: 4px solid var(--gold);
+      color: var(--parchment);
+      padding: 16px 20px;
+      border-radius: 2px;
+      max-width: 380px;
+      min-width: 280px;
+      box-shadow: 0 8px 40px rgba(9,8,6,0.55);
+      animation: toastIn 0.3s ease;
+    }
+
+    .toast.error { border-left-color: var(--ember); }
+    .toast.success { border-left-color: var(--forest); }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .toast-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+
+    .toast-title { font-size: 0.78rem; font-weight: 700; color: var(--gold-pale); }
+    .toast.success .toast-title { color: #8ed4aa; }
+    .toast.error   .toast-title { color: #e07060; }
+
+    .toast-close {
+      background: none; border: none; cursor: pointer;
+      color: rgba(240,230,207,0.4); font-size: 1.1rem; line-height: 1; padding: 0;
+    }
+    .toast-close:hover { color: var(--parchment); }
+
+    .toast-msg { font-size: 0.74rem; line-height: 1.65; color: rgba(240,230,207,0.55); }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 960px) {
+      header { padding: 0 24px; height: 68px; }
+      .nav-badge { display: none; }
+      .controls-strip .controls-inner { padding: 14px 24px; top: 68px; }
+      .hero-inner { grid-template-columns: 1fr; gap: 48px; padding: 60px 24px 56px; }
+      .upload-hero { grid-template-columns: 1fr; gap: 28px; padding: 40px 32px; }
+      .upload-form-wrap { padding: 32px; }
+      .upload-form-grid { grid-template-columns: 1fr; }
+      .uf-group.span2 { grid-column: 1; }
+      .how-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; padding: 40px 24px 32px; }
+      .footer-bottom { flex-direction: column; padding: 18px 24px; }
+      .main-content { padding: 36px 24px 64px; }
+    }
+
+    @media (max-width: 600px) {
+      .hero-h1 { font-size: 2.8rem; }
+      .freedom-pills { flex-direction: column; }
+      .footer-grid { grid-template-columns: 1fr; }
+      #bookGrid { grid-template-columns: 1fr; }
+      .upload-cta-group { flex-direction: row; flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     MARQUEE BANNER
+═══════════════════════════════════════════ -->
+<div class="top-banner" role="banner" aria-label="Key message">
+  <div class="marquee-track" aria-hidden="true">
+    <!-- Duplicated for seamless loop -->
+    <span>No Registration</span><span class="dot">✦</span>
+    <span>No Sign Up</span><span class="dot">✦</span>
+    <span>No Sign In</span><span class="dot">✦</span>
+    <span>100% Free</span><span class="dot">✦</span>
+    <span>Open Community Library</span><span class="dot">✦</span>
+    <span>Upload Instantly</span><span class="dot">✦</span>
+    <span>Download Freely</span><span class="dot">✦</span>
+    <span>Read Anywhere</span><span class="dot">✦</span>
+    <span>No Registration</span><span class="dot">✦</span>
+    <span>No Sign Up</span><span class="dot">✦</span>
+    <span>No Sign In</span><span class="dot">✦</span>
+    <span>100% Free</span><span class="dot">✦</span>
+    <span>Open Community Library</span><span class="dot">✦</span>
+    <span>Upload Instantly</span><span class="dot">✦</span>
+    <span>Download Freely</span><span class="dot">✦</span>
+    <span>Read Anywhere</span><span class="dot">✦</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════ -->
+<header>
+  <a class="logo-group" href="#" aria-label="PageVault Home">
+    <div class="logo-emblem" aria-hidden="true">📚</div>
+    <div class="logo-text">
+      <div class="logo-name">Page<em>Vault</em></div>
+      <div class="logo-sub">Open Community Library</div>
+    </div>
+  </a>
+
+  <nav class="header-nav" aria-label="Primary navigation">
+    <div class="nav-badge" aria-label="No registration required">✦ No Registration Required</div>
+    <a class="btn btn-ghost" href="https://github.com/YOUR_USERNAME/pagevault" target="_blank" rel="noopener" aria-label="View on GitHub">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 005.47 7.59c.4.07.55-.17.55-.38v-1.49c-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.65 7.65 0 018 4.07c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      GitHub
+    </a>
+    <button class="btn btn-gold" onclick="scrollToUpload()" aria-label="Upload a book">+ Upload a Book</button>
+  </nav>
+</header>
+
+<!-- ═══════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════ -->
+<section class="hero" aria-label="Hero section">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-lines" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow">
+        <div class="eyebrow-dot" aria-hidden="true"></div>
+        Community Open Library · Powered by GitHub
+      </div>
+
+      <h1 class="hero-h1">
+        <span class="line-normal">Read freely.</span>
+        <span class="line-normal">Share openly.</span>
+        <span class="line-italic">No barriers.</span>
+      </h1>
+
+      <p class="hero-p">
+        PageVault is an open, community-powered book library.
+        Upload your book in seconds — it appears in the library instantly.
+        No account, no approval queue, no friction. Just books, freely shared.
+      </p>
+
+      <div class="freedom-block" aria-label="No registration guarantee">
+        <div class="freedom-label">This library guarantees</div>
+        <div class="freedom-pills">
+          <div class="freedom-pill"><span class="pill-x" aria-hidden="true">✕</span> No Registration</div>
+          <div class="freedom-pill"><span class="pill-x" aria-hidden="true">✕</span> No Sign Up</div>
+          <div class="freedom-pill"><span class="pill-x" aria-hidden="true">✕</span> No Sign In</div>
+          <div class="freedom-pill"><span class="pill-x" aria-hidden="true">✕</span> No Fees. Ever.</div>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <a class="btn btn-gold" href="#library" style="font-size:0.82rem;padding:14px 28px;">Browse Library ↓</a>
+        <button class="btn btn-ghost" onclick="scrollToUpload()" style="font-size:0.82rem;padding:14px 28px;">+ Upload a Book</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="stats-card" role="complementary" aria-label="Library statistics">
+        <div class="stats-card-head">
+          Library at a Glance
+          <div class="stats-live-dot" aria-label="Live data"></div>
+        </div>
+        <div class="stats-rows">
+          <div class="stats-row">
+            <div class="stats-row-label">Books Available</div>
+            <div class="stats-row-value" id="statBooks">—<sup>titles</sup></div>
+          </div>
+          <div class="stats-row">
+            <div class="stats-row-label">Genres Covered</div>
+            <div class="stats-row-value" id="statGenres">—<sup>genres</sup></div>
+          </div>
+          <div class="stats-row">
+            <div class="stats-row-label">File Formats</div>
+            <div class="stats-row-value" style="font-size:1.6rem;">2<sup>PDF + EPUB</sup></div>
+          </div>
+        </div>
+        <div class="stats-free-row">
+          <div class="free-label">Cost to Read</div>
+          <div class="free-value">Always Free</div>
+        </div>
+        <div class="stats-card-foot">✦ No account needed · Open source · Hosted on GitHub</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SEARCH + FILTERS
+═══════════════════════════════════════════ -->
+<div class="controls-strip" role="search" aria-label="Search and filter">
+  <div class="controls-inner">
+    <div class="search-field">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="search" id="searchInput" placeholder="Search by title, author, genre, language…" autocomplete="off" aria-label="Search books">
+    </div>
+
+    <div class="sep" aria-hidden="true"></div>
+
+    <div class="filters" id="filterGroup" role="group" aria-label="Filter by genre"></div>
+
+    <div class="sep" aria-hidden="true"></div>
+
+    <div class="sort-wrap">
+      <span class="sort-lbl" id="sort-label">Sort</span>
+      <select id="sortSelect" aria-labelledby="sort-label">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="title">A → Z Title</option>
+        <option value="author">A → Z Author</option>
+      </select>
+    </div>
+
+    <div class="result-count" id="resultCount" aria-live="polite"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MAIN
+═══════════════════════════════════════════ -->
+<main class="main-content">
+
+  <!-- LIBRARY SECTION -->
+  <div id="library">
+    <div class="sec-heading">
+      <div class="sec-title">The Collection</div>
+      <div class="sec-rule" aria-hidden="true"></div>
+    </div>
+
+    <div id="bookGrid" role="list" aria-label="Book collection">
+      <div class="state-box">
+        <div class="spinner" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="state-title">Loading the library…</div>
+        <div class="state-sub">Fetching books from GitHub</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="sec-heading">
+    <div class="sec-title">How It Works</div>
+    <div class="sec-rule" aria-hidden="true"></div>
+  </div>
+
+  <div class="how-grid" role="list">
+    <div class="how-card" role="listitem">
+      <div class="how-num" aria-hidden="true">01</div>
+      <div class="how-icon" aria-hidden="true">🔍</div>
+      <div class="how-title">Browse & Search</div>
+      <p class="how-text">Search by title, author, genre, or language. Filter by category. Sort any way you like. No account needed — the entire library is open.</p>
+    </div>
+    <div class="how-card" role="listitem">
+      <div class="how-num" aria-hidden="true">02</div>
+      <div class="how-icon" aria-hidden="true">⚡</div>
+      <div class="how-title">Upload Instantly</div>
+      <p class="how-text">Have a book to share? Fill in the form below, drop your PDF or EPUB file, hit Upload. Your book is automatically committed to GitHub and appears live in seconds.</p>
+    </div>
+    <div class="how-card" role="listitem">
+      <div class="how-num" aria-hidden="true">03</div>
+      <div class="how-icon" aria-hidden="true">📥</div>
+      <div class="how-title">Download & Read</div>
+      <p class="how-text">Click Download to save any book to your device, or Read to open it directly in your browser. Instant access, every time, no strings attached.</p>
+    </div>
+  </div>
+
+  <!-- UPLOAD SECTION -->
+  <div id="upload-section">
+    <div class="sec-heading">
+      <div class="sec-title">Share a Book with the World</div>
+      <div class="sec-rule" aria-hidden="true"></div>
+    </div>
+
+    <div class="upload-section">
+      <div class="upload-hero">
+        <div>
+          <h2>Your upload goes <em>live automatically.</em></h2>
+          <p>No GitHub account needed. No pull requests. No approval queues. Just fill in the details, drop your file, and hit Upload — our server handles everything. Your book is committed to GitHub and appears in the library within seconds.</p>
+        </div>
+        <div class="upload-cta-group">
+          <div class="freedom-pill" style="font-size:0.68rem;"><span class="pill-x">✕</span> No GitHub needed</div>
+          <div class="freedom-pill" style="font-size:0.68rem;"><span class="pill-x">✕</span> No account required</div>
+          <div class="freedom-pill" style="font-size:0.68rem;" id="serverStatus">⟳ Checking server…</div>
+        </div>
+      </div>
+
+      <div class="upload-form-wrap">
+        <form id="uploadForm" novalidate aria-label="Book upload form">
+          <div class="upload-form-grid">
+
+            <div class="uf-group span2">
+              <label class="uf-label" for="uf-title">Book Title <span style="color:var(--ember)">*</span></label>
+              <input class="uf-input" type="text" id="uf-title" name="title" placeholder="e.g. Pride and Prejudice" required maxlength="200">
+            </div>
+
+            <div class="uf-group">
+              <label class="uf-label" for="uf-author">Author <span style="color:var(--ember)">*</span></label>
+              <input class="uf-input" type="text" id="uf-author" name="author" placeholder="e.g. Jane Austen" required maxlength="150">
+            </div>
+
+            <div class="uf-group">
+              <label class="uf-label" for="uf-year">Year Published</label>
+              <input class="uf-input" type="number" id="uf-year" name="year" placeholder="e.g. 1813" min="-3000" max="2025">
+            </div>
+
+            <div class="uf-group">
+              <label class="uf-label" for="uf-genre">Genre <span style="color:var(--ember)">*</span></label>
+              <select class="uf-select" id="uf-genre" name="genre" required>
+                <option value="">Select a genre…</option>
+                <option>Fiction</option>
+                <option>Non-Fiction</option>
+                <option>Science</option>
+                <option>History</option>
+                <option>Philosophy</option>
+                <option>Biography</option>
+                <option>Poetry</option>
+                <option>Children</option>
+                <option>Technology</option>
+                <option>Religion & Spirituality</option>
+                <option>Politics & Society</option>
+                <option>Art & Culture</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div class="uf-group">
+              <label class="uf-label" for="uf-lang">Language</label>
+              <input class="uf-input" type="text" id="uf-lang" name="language" value="English" placeholder="English" maxlength="50">
+            </div>
+
+            <div class="uf-group span2">
+              <label class="uf-label" for="uf-desc">Description</label>
+              <textarea class="uf-textarea" id="uf-desc" name="description" placeholder="A brief description — what's this book about? Why should someone read it?" maxlength="800"></textarea>
+            </div>
+
+            <div class="uf-group span2">
+              <label class="uf-label">Book File (PDF or EPUB) <span style="color:var(--ember)">*</span></label>
+              <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Click or drag to upload a book file">
+                <input type="file" id="bookFileInput" name="bookFile" accept=".pdf,.epub" aria-label="Select book file">
+                <div class="drop-icon" aria-hidden="true" id="dropIcon">📄</div>
+                <div class="drop-main">
+                  <strong>Click to select</strong> or drag & drop here
+                </div>
+                <div class="drop-sub">PDF or EPUB · Maximum 50 MB</div>
+                <div class="drop-file-name" id="dropFileName" aria-live="polite"></div>
+              </div>
+
+              <div class="upload-progress" id="uploadProgress">
+                <div class="progress-bar-track">
+                  <div class="progress-bar-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-label" id="progressLabel">Uploading…</div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="upload-submit-row">
+            <button type="submit" class="btn btn-gold" id="uploadBtn">
+              ⚡ Upload to Library
+            </button>
+            <button type="button" class="btn btn-ghost" onclick="resetForm()">Clear</button>
+            <p class="upload-disclaimer">
+              <strong>By uploading, you confirm</strong> this book is in the public domain, licensed for free distribution, or you hold the rights to share it. Copyrighted material will be removed.
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEGAL -->
+  <div class="legal-bar" role="note" aria-label="Copyright notice">
+    <div class="legal-icon" aria-hidden="true">⚖️</div>
+    <div class="legal-body">
+      <h4>Copyright & Legal Notice</h4>
+      <p>
+        PageVault only hosts books legally free to distribute — public domain works (pre-1928 in the US),
+        Creative Commons or open-licensed titles, or books shared with explicit author permission.
+        Great sources: <a href="https://www.gutenberg.org" target="_blank" rel="noopener">Project Gutenberg</a> (70,000+ free titles),
+        <a href="https://standardebooks.org" target="_blank" rel="noopener">Standard Ebooks</a>,
+        <a href="https://openlibrary.org" target="_blank" rel="noopener">Open Library</a>, and
+        <a href="https://archive.org/details/texts" target="_blank" rel="noopener">Internet Archive</a>.
+        Copyrighted uploads will be removed.
+      </p>
+    </div>
+  </div>
+
+</main>
+
+<!-- ═══════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════ -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <span class="ft-logo-name">Page<em>Vault</em></span>
+      <p class="ft-brand-text">A free, open community library powered by GitHub Pages. Built by readers, for readers. Everything is automated — just upload your book and it goes live instantly.</p>
+      <div class="ft-pills">
+        <div class="ft-pill"><span class="x">✕</span> No Registration</div>
+        <div class="ft-pill"><span class="x">✕</span> No Sign Up · No Sign In</div>
+        <div class="ft-pill"><span class="x">✕</span> No Fees. Ever.</div>
+      </div>
+    </div>
+
+    <div class="ft-col">
+      <h5>Library</h5>
+      <ul>
+        <li><a href="#library">Browse All Books</a></li>
+        <li><a href="#" onclick="setGenre('Fiction')">Fiction</a></li>
+        <li><a href="#" onclick="setGenre('Science')">Science</a></li>
+        <li><a href="#" onclick="setGenre('Philosophy')">Philosophy</a></li>
+        <li><a href="#" onclick="setGenre('History')">History</a></li>
+        <li><a href="#" onclick="setGenre('Biography')">Biography</a></li>
+      </ul>
+    </div>
+
+    <div class="ft-col">
+      <h5>Contribute</h5>
+      <ul>
+        <li><a href="#" onclick="scrollToUpload()">Upload a Book</a></li>
+        <li><a href="https://github.com/YOUR_USERNAME/pagevault" target="_blank" rel="noopener">View on GitHub</a></li>
+        <li><a href="https://github.com/YOUR_USERNAME/pagevault/issues" target="_blank" rel="noopener">Report an Issue</a></li>
+      </ul>
+    </div>
+
+    <div class="ft-col">
+      <h5>Free Book Sources</h5>
+      <ul>
+        <li><a href="https://www.gutenberg.org" target="_blank" rel="noopener">Project Gutenberg</a></li>
+        <li><a href="https://standardebooks.org" target="_blank" rel="noopener">Standard Ebooks</a></li>
+        <li><a href="https://openlibrary.org" target="_blank" rel="noopener">Open Library</a></li>
+        <li><a href="https://archive.org/details/texts" target="_blank" rel="noopener">Internet Archive</a></li>
+        <li><a href="https://manybooks.net" target="_blank" rel="noopener">ManyBooks</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="ft-copy">© 2025 PageVault — Open Community Library · Hosted on GitHub Pages · MIT License</div>
+    <div class="ft-links">
+      <a href="https://github.com/YOUR_USERNAME/pagevault" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/YOUR_USERNAME/pagevault/blob/main/README.md" target="_blank" rel="noopener">Docs</a>
+      <a href="https://creativecommons.org" target="_blank" rel="noopener">Creative Commons</a>
+    </div>
+  </div>
+</footer>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="false"></div>
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ──────────────────────────────────────────────────────────────
+   CONFIGURATION
+   Replace YOUR_BACKEND_URL with your Render.com backend URL
+   e.g. https://pagevault-backend.onrender.com
+────────────────────────────────────────────────────────────── */
+const CONFIG = {
+  BACKEND_URL: 'https://YOUR_BACKEND_URL.onrender.com',
+  GITHUB_OWNER: 'YOUR_USERNAME',
+  GITHUB_REPO: 'pagevault',
+  GITHUB_BRANCH: 'main'
+};
+
+/* ──────────────────────────────────────────────────────────────
+   GENRE COLORS
+────────────────────────────────────────────────────────────── */
+const GENRE_COLORS = {
+  'Fiction':               '#9c3d2e',
+  'Non-Fiction':           '#556b55',
+  'Science':               '#3a4a5a',
+  'History':               '#7a5a2a',
+  'Philosophy':            '#4a5a7a',
+  'Biography':             '#5a4570',
+  'Poetry':                '#7a4a2a',
+  'Children':              '#3a6b60',
+  'Technology':            '#2a5a6a',
+  'Religion & Spirituality': '#6a5535',
+  'Politics & Society':    '#5a3a5a',
+  'Art & Culture':         '#6a3a4a',
+  'Other':                 '#4a4a4a'
+};
+
+/* ──────────────────────────────────────────────────────────────
+   STATE
+────────────────────────────────────────────────────────────── */
+let books       = [];
+let activeGenre = 'all';
+let searchQuery = '';
+let sortMode    = 'newest';
+
+/* ──────────────────────────────────────────────────────────────
+   FETCH BOOKS FROM BACKEND
+────────────────────────────────────────────────────────────── */
+async function loadBooks() {
+  try {
+    const res = await fetch(`${CONFIG.BACKEND_URL}/api/books`, { signal: AbortSignal.timeout(8000) });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    books = data.books || [];
+    renderAll();
+  } catch (err) {
+    console.warn('Backend unavailable, falling back to books.json:', err.message);
+    // Fallback: load directly from GitHub Pages books.json
+    try {
+      const res2 = await fetch('books.json?_=' + Date.now());
+      if (res2.ok) books = await res2.json();
+    } catch {}
+    renderAll();
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SERVER STATUS CHECK
+────────────────────────────────────────────────────────────── */
+async function checkServerStatus() {
+  const el = document.getElementById('serverStatus');
+  try {
+    const res = await fetch(`${CONFIG.BACKEND_URL}/health`, { signal: AbortSignal.timeout(5000) });
+    if (res.ok) {
+      el.innerHTML = '<span style="color:#7bc49a">✓ Server Online · Ready to Upload</span>';
+      el.style.borderColor = 'rgba(58,97,72,0.4)';
+    } else {
+      throw new Error('not ok');
+    }
+  } catch {
+    el.innerHTML = '<span style="color:rgba(240,230,207,0.4)">⚠ Server offline — see setup guide</span>';
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   FILTER + SORT
+────────────────────────────────────────────────────────────── */
+function getGenres() {
+  return [...new Set(books.map(b => b.genre).filter(Boolean))].sort();
+}
+
+function filtered() {
+  let list = [...books];
+  if (activeGenre !== 'all') list = list.filter(b => b.genre === activeGenre);
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    list = list.filter(b =>
+      (b.title       || '').toLowerCase().includes(q) ||
+      (b.author      || '').toLowerCase().includes(q) ||
+      (b.genre       || '').toLowerCase().includes(q) ||
+      (b.description || '').toLowerCase().includes(q) ||
+      (b.language    || '').toLowerCase().includes(q)
+    );
+  }
+  if      (sortMode === 'newest') list.sort((a, b) => (b.year || 0) - (a.year || 0));
+  else if (sortMode === 'oldest') list.sort((a, b) => (a.year || 0) - (b.year || 0));
+  else if (sortMode === 'title')  list.sort((a, b) => (a.title  || '').localeCompare(b.title  || ''));
+  else if (sortMode === 'author') list.sort((a, b) => (a.author || '').localeCompare(b.author || ''));
+  return list;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   RENDER
+────────────────────────────────────────────────────────────── */
+function renderFilters() {
+  const group = document.getElementById('filterGroup');
+  const genres = getGenres();
+  group.innerHTML = `<button class="f-btn ${activeGenre === 'all' ? 'active' : ''}" data-genre="all">All</button>` +
+    genres.map(g => `<button class="f-btn ${activeGenre === g ? 'active' : ''}" data-genre="${encodeURIComponent(g)}">${g}</button>`).join('');
+  group.querySelectorAll('.f-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeGenre = btn.dataset.genre === 'all' ? 'all' : decodeURIComponent(btn.dataset.genre);
+      renderAll();
+      document.getElementById('library').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+}
+
+function renderBooks() {
+  const grid = document.getElementById('bookGrid');
+  const list = filtered();
+
+  document.getElementById('resultCount').innerHTML =
+    `Showing <strong>${list.length}</strong> of ${books.length}`;
+
+  if (!books.length) {
+    grid.innerHTML = `
+      <div class="state-box">
+        <div class="state-icon">📭</div>
+        <div class="state-title">Library is empty</div>
+        <div class="state-sub">Be the first to <a onclick="scrollToUpload()">upload a book</a>!</div>
+      </div>`;
+    return;
+  }
+
+  if (!list.length) {
+    grid.innerHTML = `
+      <div class="state-box">
+        <div class="state-icon">🔍</div>
+        <div class="state-title">No results found</div>
+        <div class="state-sub">Try a different search, or <a onclick="clearSearch()">clear the filters</a></div>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map((book, i) => {
+    const color   = book.color || GENRE_COLORS[book.genre] || '#4a4a4a';
+    const year    = book.year ? (book.year < 0 ? `${Math.abs(book.year)} BC` : book.year) : '—';
+    const fileUrl = `https://raw.githubusercontent.com/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/${CONFIG.GITHUB_BRANCH}/${book.file}`;
+
+    return `
+      <div class="book-card" style="animation-delay:${Math.min(i * 0.045, 0.45)}s" role="listitem">
+        <div class="card-accent" style="background:${color}"></div>
+        <div class="card-body">
+          <div class="card-top">
+            <span class="genre-chip">${escHtml(book.genre || '')}</span>
+            <span class="format-chip">${escHtml(book.format || 'PDF')}</span>
+          </div>
+          <div class="card-title">${escHtml(book.title || '')}</div>
+          <div class="card-author">${escHtml(book.author || '')}</div>
+          <div class="card-desc">${escHtml(book.description || '')}</div>
+          <div class="card-meta">
+            <div class="meta-pair"><span class="meta-k">Year</span><span class="meta-v">${year}</span></div>
+            <div class="meta-pair"><span class="meta-k">Size</span><span class="meta-v">${escHtml(book.size || '—')}</span></div>
+            <div class="meta-pair"><span class="meta-k">Language</span><span class="meta-v">${escHtml(book.language || 'English')}</span></div>
+            <div class="meta-pair"><span class="meta-k">Format</span><span class="meta-v">${escHtml(book.format || 'PDF')}</span></div>
+          </div>
+          <div class="card-actions">
+            <a class="card-btn btn-dl" href="${fileUrl}" download="${escHtml(book.title || 'book')}" aria-label="Download ${escHtml(book.title || '')}">↓ Download</a>
+            <a class="card-btn btn-rd" href="${fileUrl}" target="_blank" rel="noopener" aria-label="Read ${escHtml(book.title || '')} online">↗ Read</a>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function updateStats() {
+  document.getElementById('statBooks').innerHTML  = `${books.length}<sup>titles</sup>`;
+  document.getElementById('statGenres').innerHTML = `${getGenres().length}<sup>genres</sup>`;
+}
+
+function renderAll() {
+  renderFilters();
+  renderBooks();
+  updateStats();
+}
+
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  searchQuery = '';
+  activeGenre = 'all';
+  renderAll();
+}
+
+function setGenre(g) {
+  activeGenre = g;
+  renderAll();
+  setTimeout(() => document.getElementById('library').scrollIntoView({ behavior: 'smooth' }), 50);
+}
+
+/* ──────────────────────────────────────────────────────────────
+   EVENTS — search & sort
+────────────────────────────────────────────────────────────── */
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchQuery = e.target.value.trim();
+  renderBooks();
+});
+
+document.getElementById('sortSelect').addEventListener('change', e => {
+  sortMode = e.target.value;
+  renderBooks();
+});
+
+/* ──────────────────────────────────────────────────────────────
+   SCROLL TO UPLOAD
+────────────────────────────────────────────────────────────── */
+function scrollToUpload() {
+  document.getElementById('upload-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ──────────────────────────────────────────────────────────────
+   FILE DROP ZONE
+────────────────────────────────────────────────────────────── */
+const dropZone    = document.getElementById('dropZone');
+const fileInput   = document.getElementById('bookFileInput');
+const dropIcon    = document.getElementById('dropIcon');
+const dropFileName = document.getElementById('dropFileName');
+
+function setFile(file) {
+  if (!file) return;
+  const ext = file.name.split('.').pop().toLowerCase();
+  if (!['pdf', 'epub'].includes(ext)) {
+    showToast('Invalid File', 'Only PDF and EPUB files are accepted.', 'error');
+    return;
+  }
+  if (file.size > 50 * 1024 * 1024) {
+    showToast('File Too Large', 'Maximum file size is 50 MB.', 'error');
+    return;
+  }
+  dropIcon.textContent = ext === 'epub' ? '📘' : '📄';
+  dropFileName.textContent = `✓ ${file.name} (${(file.size / (1024*1024)).toFixed(1)} MB)`;
+  dropZone.classList.add('has-file');
+}
+
+fileInput.addEventListener('change', () => setFile(fileInput.files[0]));
+
+dropZone.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+});
+
+['dragover', 'dragenter'].forEach(evt => {
+  dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.classList.add('active'); });
+});
+['dragleave', 'dragend'].forEach(evt => {
+  dropZone.addEventListener(evt, () => dropZone.classList.remove('active'));
+});
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('active');
+  const f = e.dataTransfer.files[0];
+  if (f) {
+    // Transfer to input
+    const dt = new DataTransfer();
+    dt.items.add(f);
+    fileInput.files = dt.files;
+    setFile(f);
+  }
+});
+
+/* ──────────────────────────────────────────────────────────────
+   UPLOAD FORM SUBMIT
+────────────────────────────────────────────────────────────── */
+document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const title  = document.getElementById('uf-title').value.trim();
+  const author = document.getElementById('uf-author').value.trim();
+  const genre  = document.getElementById('uf-genre').value;
+  const year   = document.getElementById('uf-year').value.trim();
+  const lang   = document.getElementById('uf-lang').value.trim() || 'English';
+  const desc   = document.getElementById('uf-desc').value.trim();
+  const file   = fileInput.files[0];
+
+  // Client-side validation
+  if (!title)  return showToast('Missing Field', 'Please enter the book title.', 'error');
+  if (!author) return showToast('Missing Field', 'Please enter the author name.', 'error');
+  if (!genre)  return showToast('Missing Field', 'Please select a genre.', 'error');
+  if (!file)   return showToast('No File Selected', 'Please select a PDF or EPUB file to upload.', 'error');
+
+  const btn      = document.getElementById('uploadBtn');
+  const progress = document.getElementById('uploadProgress');
+  const fill     = document.getElementById('progressFill');
+  const label    = document.getElementById('progressLabel');
+
+  btn.disabled  = true;
+  btn.innerHTML = '⟳ Uploading…';
+  progress.classList.add('show');
+
+  // Animate progress bar (indeterminate style)
+  let pct = 0;
+  const ticker = setInterval(() => {
+    pct = Math.min(pct + (pct < 60 ? 3 : pct < 85 ? 1 : 0.3), 90);
+    fill.style.width = pct + '%';
+    if (pct < 40)      label.textContent = 'Uploading file…';
+    else if (pct < 70) label.textContent = 'Committing to GitHub…';
+    else               label.textContent = 'Updating library catalog…';
+  }, 200);
+
+  try {
+    const formData = new FormData();
+    formData.append('title',       title);
+    formData.append('author',      author);
+    formData.append('genre',       genre);
+    formData.append('year',        year);
+    formData.append('language',    lang);
+    formData.append('description', desc);
+    formData.append('bookFile',    file);
+
+    const res = await fetch(`${CONFIG.BACKEND_URL}/api/upload`, {
+      method: 'POST',
+      body:   formData
+    });
+
+    const data = await res.json();
+
+    clearInterval(ticker);
+    fill.style.width = '100%';
+    label.textContent = 'Complete!';
+
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || 'Upload failed');
+    }
+
+    // Success!
+    showToast(
+      '✅ Book Added to Library!',
+      `"${title}" is now live. The library has been updated automatically.`,
+      'success'
+    );
+
+    resetForm();
+
+    // Reload books after a short delay
+    setTimeout(loadBooks, 2500);
+
+  } catch (err) {
+    clearInterval(ticker);
+    fill.style.width = '0%';
+    fill.style.background = 'var(--ember)';
+    label.textContent = 'Upload failed';
+
+    const msg = err.message && err.message !== 'Failed to fetch'
+      ? err.message
+      : 'Could not connect to the backend server. Make sure it is running. See the README for setup instructions.';
+
+    showToast('Upload Failed', msg, 'error');
+
+  } finally {
+    btn.disabled  = false;
+    btn.innerHTML = '⚡ Upload to Library';
+    setTimeout(() => { progress.classList.remove('show'); fill.style.background = ''; }, 3000);
+  }
+});
+
+function resetForm() {
+  document.getElementById('uploadForm').reset();
+  dropFileName.textContent = '';
+  dropIcon.textContent = '📄';
+  dropZone.classList.remove('has-file', 'active');
+}
+
+/* ──────────────────────────────────────────────────────────────
+   TOAST NOTIFICATIONS
+────────────────────────────────────────────────────────────── */
+function showToast(title, message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const id        = 'toast-' + Date.now();
+
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.id        = id;
+  el.setAttribute('role', 'alert');
+  el.innerHTML = `
+    <div class="toast-head">
+      <div class="toast-title">${escHtml(title)}</div>
+      <button class="toast-close" onclick="document.getElementById('${id}').remove()" aria-label="Dismiss">×</button>
+    </div>
+    <div class="toast-msg">${escHtml(message)}</div>`;
+
+  container.appendChild(el);
+  setTimeout(() => el.remove(), 6000);
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SECURITY: HTML escape
+────────────────────────────────────────────────────────────── */
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+/* ──────────────────────────────────────────────────────────────
+   KEYBOARD SHORTCUT: Ctrl/Cmd+K focuses search
+────────────────────────────────────────────────────────────── */
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    document.getElementById('searchInput').focus();
+  }
+});
+
+/* ──────────────────────────────────────────────────────────────
+   INIT
+────────────────────────────────────────────────────────────── */
+loadBooks();
+checkServerStatus();
+</script>
+
+</body>
+</html>
