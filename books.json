@@ -26,5 +26,19 @@
     "file": "books/icse-class-ix-computer-application-solutions-frank-edu.pdf",
     "color": "#4a4a4a",
     "uploadedAt": "2026-02-28T03:57:47.959Z"
+  },
+  {
+    "id": 3,
+    "title": "Atomic Habits: An Easy & Proven Way to Build Good Habits & Break Bad Ones.",
+    "author": "James Clear",
+    "genre": "Non-Fiction",
+    "year": 2018,
+    "language": "English",
+    "size": "4.8 MB",
+    "format": "PDF",
+    "description": "This book provides a step-by-step plan for building better habits by focusing on \"atomic habits\"—small, 1 percent improvements that compound into remarkable results over time. It introduces a four-step model (cue, craving, response, and reward) and the \"Four Laws of Behavior Change\" to help readers fulfill their potential by designing systems for success rather than just setting goals",
+    "file": "books/atomic-habits-an-easy-proven-way-to-build-good-habits-break--james-clear.pdf",
+    "color": "#556b55",
+    "uploadedAt": "2026-03-04T14:20:29.557Z"
   }
 ]
